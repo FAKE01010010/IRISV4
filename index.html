@@ -52,17 +52,31 @@
                     <canvas id="weightChart"></canvas>
                 </div>
                 <div class="stats-panel">
-                    <div class="stat-item">
-                        <span class="stat-label">7D AVG:</span>
+                    <div class="stat-item" data-type="7d-avg">
+                        <span class="stat-label">7D AVG</span>
                         <span id="weekAvg" class="stat-value">--.-</span>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-label">30D AVG:</span>
+                    <div class="stat-item" data-type="30d-avg">
+                        <span class="stat-label">30D AVG</span>
                         <span id="monthAvg" class="stat-value">--.-</span>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-label">TOTAL Δ:</span>
+                    <div class="stat-item" data-type="total-change">
+                        <span class="stat-label">TOTAL Δ</span>
                         <span id="totalChange" class="stat-value">--.-</span>
+                    </div>
+                </div>
+                <div class="stats-panel biometrics-panel">
+                    <div class="stat-item" data-type="bodyfat">
+                        <span class="stat-label">WEEKLY BODYFAT</span>
+                        <span id="weeklyBodyfat" class="stat-value">--.-</span>
+                    </div>
+                    <div class="stat-item" data-type="muscle-ratio">
+                        <span class="stat-label">MUSCLE/FAT RATIO</span>
+                        <span id="muscleFatRatio" class="stat-value">--.-</span>
+                    </div>
+                    <div class="stat-item" data-type="bmi-trend">
+                        <span class="stat-label">BMI TREND</span>
+                        <span id="bmiTrend" class="stat-value">→</span>
                     </div>
                 </div>
             </section>

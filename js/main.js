@@ -5,6 +5,12 @@
 import { saveWeight, getAllWeights } from './storage.js';
 import { initializeChart, updateChart } from './chart.js';
 import { updateTable } from './table.js';
+import {
+    loadBiometricData,
+    calculateWeeklyBodyFat,
+    calculateMuscleFatRatio,
+    calculateBMITrend
+} from './biometrics.js';
 
 // Configuración de la aplicación
 const CONFIG = {
@@ -14,7 +20,11 @@ const CONFIG = {
     chartId: 'weightChart',
     tableId: 'weightTable',
     rangeButtonId: 'rangeButton',
-    timeId: 'current-time'
+    timeId: 'current-time',
+    // Nuevos IDs para métricas biométricas
+    weeklyBodyfatId: 'weeklyBodyfat',
+    muscleFatRatioId: 'muscleFatRatio',
+    bmiTrendId: 'bmiTrend'
 };
 
 // Estado global de la aplicación
@@ -51,14 +61,42 @@ function initializeRangeSelector() {
     const rangeButton = document.getElementById(CONFIG.rangeButtonId);
     const rangeOptions = document.querySelectorAll('.range-option');
 
+    // Función para actualizar la clase activa
+    function updateActiveRange(selectedRange) {
+        rangeOptions.forEach(opt => {
+            opt.classList.remove('active');
+            if (opt.dataset.range === selectedRange) {
+                opt.classList.add('active');
+            }
+        });
+    }
+
     rangeOptions.forEach(option => {
         option.addEventListener('click', () => {
             const range = option.dataset.range;
             STATE.currentRange = range;
             rangeButton.textContent = `RANGE: ${range.toUpperCase()}`;
+            
+            // Añadir efecto de highlight
+            option.style.transition = 'all 0.3s ease';
+            option.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.5)';
+            option.style.textShadow = '0 0 10px rgba(255, 255, 255, 0.8)';
+            
+            // Actualizar clase activa
+            updateActiveRange(range);
+            
+            // Restaurar después de la animación
+            setTimeout(() => {
+                option.style.boxShadow = '';
+                option.style.textShadow = '';
+            }, 300);
+            
             refreshData();
         });
     });
+
+    // Establecer el rango inicial como activo
+    updateActiveRange(STATE.currentRange);
 }
 
 /**
@@ -115,12 +153,51 @@ function handleFormSubmit(event) {
 }
 
 /**
+ * Actualiza las estadísticas biométricas
+ */
+function updateBiometricStats() {
+    const biometricData = loadBiometricData();
+    if (!biometricData.length) return;
+
+    // Actualizar indicadores biométricos
+    document.getElementById(CONFIG.weeklyBodyfatId).textContent = 
+        calculateWeeklyBodyFat(biometricData);
+    
+    document.getElementById(CONFIG.muscleFatRatioId).textContent = 
+        calculateMuscleFatRatio(biometricData);
+    
+    document.getElementById(CONFIG.bmiTrendId).textContent = 
+        calculateBMITrend(biometricData);
+}
+
+/**
+ * Muestra el indicador de importación
+ * @param {string} message - Mensaje a mostrar
+ */
+function showImportIndicator(message) {
+    const indicator = document.createElement('div');
+    indicator.className = 'import-indicator';
+    indicator.textContent = message;
+    document.body.appendChild(indicator);
+
+    // Activar con un pequeño delay para la animación
+    setTimeout(() => indicator.classList.add('active'), 10);
+
+    // Remover después de 3 segundos
+    setTimeout(() => {
+        indicator.classList.remove('active');
+        setTimeout(() => document.body.removeChild(indicator), 300);
+    }, 3000);
+}
+
+/**
  * Actualiza todas las visualizaciones de datos
  */
 function refreshData() {
     const weights = getAllWeights();
     updateChart(weights, STATE.currentRange);
     updateTable(weights, CONFIG.tableId, refreshData);
+    updateBiometricStats();
 }
 
 // Inicializar la aplicación cuando el DOM esté listo
@@ -133,4 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Iniciar el reloj del sistema
     updateSystemTime();
     setInterval(updateSystemTime, 1000);
+
+    // Escuchar eventos de actualización de datos biométricos
+    window.addEventListener('biometricsUpdated', () => {
+        showImportIndicator('BIOMETRIC_DATA_IMPORTED');
+        refreshData();
+    });
 }); 

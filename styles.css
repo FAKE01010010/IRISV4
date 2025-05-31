@@ -12,6 +12,12 @@
     --sys-spacing: 2rem;
     --sys-transition: 150ms linear;
     --sys-line: 1px solid var(--sys-border);
+    --sys-glow: 0 0 10px rgba(255, 255, 255, 0.2);
+    --sys-highlight: rgba(255, 255, 255, 0.1);
+    --sys-panel-transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                          box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --sys-scanner-width: 150px;
+    --sys-scanner-opacity: 0.03;
 }
 
 /* Reset y base */
@@ -31,6 +37,20 @@ body {
     line-height: 1.5;
     letter-spacing: 0.5px;
     min-height: 100vh;
+}
+
+/* Eliminar explícitamente todos los efectos de escaneo */
+body::before,
+body::after,
+.panel::before,
+.panel::after,
+.stats-panel::before,
+.stats-panel::after,
+.biometrics-panel::before,
+.biometrics-panel::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
 }
 
 /* Sistema de cuadrícula */
@@ -71,9 +91,25 @@ body {
 /* Paneles */
 .panel {
     border: var(--sys-line);
-    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: var(--sys-glow);
+    backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+    transform-origin: center center;
+    transition: var(--sys-panel-transition);
+    will-change: transform, box-shadow;
 }
 
+/* Efecto hover táctico */
+.panel:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1),
+                0 0 15px rgba(255, 255, 255, 0.1),
+                0 0 30px rgba(255, 255, 255, 0.05);
+}
+
+/* Panel header */
 .panel-header {
     display: flex;
     justify-content: space-between;
@@ -82,6 +118,7 @@ body {
     border-bottom: var(--sys-line);
     font-size: 0.9rem;
     letter-spacing: 1px;
+    background: rgba(0, 0, 0, 0.9);
 }
 
 /* Formulario */
@@ -173,43 +210,176 @@ input:focus {
 }
 
 .range-option {
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.2rem;
     cursor: pointer;
     transition: var(--sys-transition);
-    font-size: 0.8rem;
 }
 
 .range-option:hover {
-    background: var(--sys-fg);
-    color: var(--sys-bg);
+    background: var(--sys-highlight);
 }
 
 /* Panel de estadísticas */
-.stats-panel {
+.stats-panel, .biometrics-panel {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
-    padding: 1rem;
+    padding: 1.5rem;
     border-top: var(--sys-line);
-    margin-top: 1rem;
+    background: rgba(0, 0, 0, 0.9);
 }
 
 .stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     text-align: center;
+    padding: 1.2rem;
+    border: 1px solid var(--sys-border);
+    background: rgba(0, 0, 0, 0.8);
+    position: relative;
+    overflow: hidden;
+    transition: var(--sys-transition);
+    min-height: 100px;
+}
+
+.stat-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%);
+}
+
+.stat-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%);
 }
 
 .stat-label {
-    font-size: 0.8rem;
+    font-family: var(--sys-font);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     opacity: 0.7;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    padding: 0 0.5rem;
 }
 
 .stat-value {
-    font-size: 1.2rem;
+    font-family: var(--sys-font);
+    font-size: 1.4rem;
     font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--sys-fg);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Estilos específicos para cada tipo */
+.stat-item[data-type="7d-avg"],
+.stat-item[data-type="30d-avg"] {
+    background: linear-gradient(180deg, 
+        rgba(0, 0, 0, 0.9) 0%,
+        rgba(0, 0, 0, 0.8) 100%);
+}
+
+.stat-item[data-type="total-change"] {
+    background: linear-gradient(180deg, 
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(0, 0, 0, 0.85) 100%);
+}
+
+.stat-item[data-type="bodyfat"] .stat-value,
+.stat-item[data-type="muscle-ratio"] .stat-value {
+    font-size: 1.2rem;
+}
+
+.stat-item[data-type="bmi-trend"] .stat-value {
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+/* Hover effects */
+.stat-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.stat-item:hover .stat-label {
+    opacity: 0.9;
+}
+
+.stat-item:hover .stat-value {
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+/* Animaciones */
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes valueUpdate {
+    0% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes tacticalScan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.stat-value.updating {
+    animation: valueUpdate 0.3s ease-out;
+}
+
+/* Indicador de importación activa */
+.import-indicator {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.9);
+    border: var(--sys-line);
+    color: var(--sys-fg);
+    font-family: var(--sys-font);
+    font-size: 0.8rem;
+    opacity: 0;
+    transform: translateY(-1rem);
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.import-indicator.active {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Gráfico */
@@ -263,7 +433,8 @@ tr {
 }
 
 tr:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background: var(--sys-highlight);
+    box-shadow: var(--sys-glow);
 }
 
 tr:hover .delete-cell {
@@ -339,18 +510,22 @@ tr:hover .delete-cell {
         grid-template-columns: 1fr;
     }
 
-    .stats-panel {
+    .stats-panel,
+    .biometrics-panel {
         grid-template-columns: 1fr;
         gap: 0.5rem;
+        padding: 1rem;
     }
 
     .stat-item {
         flex-direction: row;
         justify-content: space-between;
+        padding: 0.75rem;
     }
 
     .stat-label {
         margin-bottom: 0;
+        margin-right: 1rem;
     }
 
     .cmd-button {
@@ -367,4 +542,26 @@ tr:hover .delete-cell {
 .header-right::after {
     content: '_';
     animation: blink 1s step-end infinite;
+}
+
+/* Eliminar explícitamente cualquier animación o efecto de escaneo */
+@keyframes tacticalScan,
+@keyframes scanline,
+@keyframes verticalScan {
+    /* Eliminar todas las animaciones relacionadas con escaneo */
+    from, to {
+        transform: none;
+    }
+}
+
+@keyframes panelActivate {
+    0% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.5;
+    }
 } 

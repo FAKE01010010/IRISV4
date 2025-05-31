@@ -143,9 +143,10 @@ function filterDataByRange(data, range) {
 /**
  * Calcula estadísticas de los datos
  * @param {Array} data - Datos completos
+ * @param {string} range - Rango actual seleccionado
  * @returns {Object} Estadísticas calculadas
  */
-function calculateStats(data) {
+function calculateStats(data, range = 'weekly') {
     if (!data.length) return { weekAvg: 0, monthAvg: 0, totalChange: 0 };
 
     const now = new Date();
@@ -161,8 +162,10 @@ function calculateStats(data) {
     const monthAvg = monthData.length ?
         monthData.reduce((sum, r) => sum + r.weight, 0) / monthData.length : 0;
 
-    const firstWeight = data[0]?.weight || 0;
-    const lastWeight = data[data.length - 1]?.weight || 0;
+    // Filtrar datos según el rango actual para calcular el cambio total
+    const filteredData = filterDataByRange(data, range);
+    const firstWeight = filteredData[0]?.weight || 0;
+    const lastWeight = filteredData[filteredData.length - 1]?.weight || 0;
     const totalChange = lastWeight - firstWeight;
 
     return {
@@ -181,7 +184,7 @@ export function updateChart(weightData, range = 'weekly') {
     if (!weightChart) return;
 
     const filteredData = filterDataByRange(weightData, range);
-    const stats = calculateStats(weightData);
+    const stats = calculateStats(weightData, range);
 
     // Actualizar gráfico
     weightChart.data.labels = filteredData.map(record => {
