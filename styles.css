@@ -1,0 +1,370 @@
+/* IRIS V4 - Sistema de Control Biométrico
+   Versión: Terminal.1
+   Diseño: Control Militar Digital */
+
+/* Variables del sistema */
+:root {
+    --sys-bg: #000000;
+    --sys-fg: #ffffff;
+    --sys-dim: rgba(255, 255, 255, 0.7);
+    --sys-border: rgba(255, 255, 255, 0.2);
+    --sys-font: 'IBM Plex Mono', monospace;
+    --sys-spacing: 2rem;
+    --sys-transition: 150ms linear;
+    --sys-line: 1px solid var(--sys-border);
+}
+
+/* Reset y base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: none;
+}
+
+/* Estructura base */
+body {
+    background: var(--sys-bg);
+    color: var(--sys-fg);
+    font-family: var(--sys-font);
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    min-height: 100vh;
+}
+
+/* Sistema de cuadrícula */
+.system {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    gap: var(--sys-spacing);
+    padding: var(--sys-spacing);
+}
+
+/* Header del sistema */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: var(--sys-line);
+}
+
+.header-left {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+.header-right {
+    font-family: var(--sys-font);
+    opacity: 0.7;
+}
+
+/* Grid principal */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--sys-spacing);
+}
+
+/* Paneles */
+.panel {
+    border: var(--sys-line);
+    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: var(--sys-line);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+/* Formulario */
+.data-form {
+    padding: 1rem;
+}
+
+.form-row {
+    margin-bottom: 1rem;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: var(--sys-line);
+    color: var(--sys-fg);
+    font-family: var(--sys-font);
+    font-size: 1.2rem;
+    padding: 0.5rem 0;
+    transition: var(--sys-transition);
+}
+
+/* Eliminar flechas del input number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input:focus {
+    outline: none;
+    border-bottom-color: var(--sys-fg);
+}
+
+/* Botones */
+.cmd-button {
+    background: transparent;
+    color: var(--sys-fg);
+    border: var(--sys-line);
+    padding: 0.75rem 1.5rem;
+    font-family: var(--sys-font);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: var(--sys-transition);
+}
+
+.cmd-button:hover {
+    background: var(--sys-fg);
+    color: var(--sys-bg);
+}
+
+.cmd-button.small {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+}
+
+/* Selector de rango */
+.range-selector {
+    position: relative;
+}
+
+.range-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--sys-bg);
+    border: var(--sys-line);
+    z-index: 10;
+    min-width: 150px;
+}
+
+.range-selector:hover .range-options {
+    display: block;
+}
+
+.range-option {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: var(--sys-transition);
+    font-size: 0.8rem;
+}
+
+.range-option:hover {
+    background: var(--sys-fg);
+    color: var(--sys-bg);
+}
+
+/* Panel de estadísticas */
+.stats-panel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+    border-top: var(--sys-line);
+    margin-top: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+/* Gráfico */
+.chart-container {
+    padding: 1rem;
+    height: 300px;
+}
+
+/* Tabla */
+.table-container {
+    overflow-x: auto;
+    padding: 1rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: var(--sys-line);
+}
+
+th {
+    font-size: 0.8rem;
+    font-weight: normal;
+    opacity: 0.7;
+}
+
+/* Celda de eliminación */
+.delete-cell {
+    opacity: 0;
+    cursor: pointer;
+    text-align: center;
+    font-family: var(--sys-font);
+    transition: opacity var(--sys-transition);
+    width: 40px;
+    padding: 0.75rem 0;
+    color: var(--sys-fg);
+    font-size: 1.5rem;
+    font-weight: 300;
+    line-height: 1;
+}
+
+/* Efectos de hover en la tabla */
+tr {
+    transition: background-color var(--sys-transition);
+}
+
+tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+tr:hover .delete-cell {
+    opacity: 0.7;
+}
+
+.delete-cell:hover {
+    opacity: 1 !important;
+}
+
+/* Animación de eliminación */
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.row-fade-out {
+    animation: fadeOut 300ms forwards;
+    pointer-events: none;
+}
+
+/* Footer */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-top: var(--sys-line);
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/* Flatpickr personalizado */
+.flatpickr-calendar {
+    background: var(--sys-bg) !important;
+    border: var(--sys-line) !important;
+    box-shadow: none !important;
+    font-family: var(--sys-font) !important;
+}
+
+.flatpickr-day {
+    color: var(--sys-fg) !important;
+    border: 1px solid transparent !important;
+}
+
+.flatpickr-day.selected {
+    background: var(--sys-fg) !important;
+    color: var(--sys-bg) !important;
+    border-color: var(--sys-fg) !important;
+}
+
+.flatpickr-day:hover {
+    background: var(--sys-dim) !important;
+    color: var(--sys-bg) !important;
+}
+
+.flatpickr-months,
+.flatpickr-weekdays {
+    color: var(--sys-fg) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    :root {
+        --sys-spacing: 1rem;
+    }
+
+    .system {
+        padding: 0.5rem;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-panel {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .stat-item {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .stat-label {
+        margin-bottom: 0;
+    }
+
+    .cmd-button {
+        width: 100%;
+    }
+}
+
+/* Animaciones */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.header-right::after {
+    content: '_';
+    animation: blink 1s step-end infinite;
+} 

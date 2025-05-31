@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRIS_V4::CONTROL</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="system">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">IRIS_V4::WEIGHT_CONTROL</div>
+            <div class="header-right" id="current-time">00:00:00</div>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="grid">
+            <!-- Input Section -->
+            <section class="panel input-panel">
+                <div class="panel-header">INPUT_DATA</div>
+                <form id="weightForm" class="data-form">
+                    <div class="form-row">
+                        <label for="weight">WEIGHT_KG:</label>
+                        <input type="number" id="weight" step="0.01" required>
+                    </div>
+                    <div class="form-row">
+                        <label for="date">DATE:</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <button type="submit" class="cmd-button">SAVE_RECORD</button>
+                </form>
+            </section>
+
+            <!-- Chart Section -->
+            <section class="panel chart-panel">
+                <div class="panel-header">
+                    <span>WEIGHT_EVOLUTION</span>
+                    <div class="range-selector">
+                        <button id="rangeButton" class="cmd-button small">RANGE: WEEKLY</button>
+                        <div id="rangeOptions" class="range-options">
+                            <div class="range-option" data-range="weekly">WEEKLY</div>
+                            <div class="range-option" data-range="monthly">MONTHLY</div>
+                            <div class="range-option" data-range="yearly">YEARLY</div>
+                            <div class="range-option" data-range="all">ALL DATA</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="weightChart"></canvas>
+                </div>
+                <div class="stats-panel">
+                    <div class="stat-item">
+                        <span class="stat-label">7D AVG:</span>
+                        <span id="weekAvg" class="stat-value">--.-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">30D AVG:</span>
+                        <span id="monthAvg" class="stat-value">--.-</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">TOTAL Δ:</span>
+                        <span id="totalChange" class="stat-value">--.-</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Table Section -->
+            <section class="panel table-panel">
+                <div class="panel-header">HISTORICAL_DATA</div>
+                <div class="table-container">
+                    <table id="weightTable">
+                        <thead>
+                            <tr>
+                                <th>DATE</th>
+                                <th>WEIGHT</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-left">SYSTEM_STATUS: ACTIVE</div>
+            <div class="footer-right">RECORDS: <span id="recordCount">0</span></div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html> 
